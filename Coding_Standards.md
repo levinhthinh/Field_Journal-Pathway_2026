@@ -10,3 +10,5 @@ ChatGPT bảo nên có cái này
 4. Sử dụng Pascale_Snake_Case cho tên file (tao tự bịa)
 
 Khi dùng Source Control để push git, nhớ là kéo tất cả file vào Staged Changes rồi mới push được 
+
+giakhangdo hello abc
