@@ -1,0 +1,16 @@
+##### gitignore tránh commit file không cần thiết lên repo.
+
+__pycache__/
+*.py[cod]
+
+# Virtual environment
+.venv/
+venv/
+.venv*/
+
+# Environment variables
+.env
+
+# Django
+# db.sqlite3
+# media/

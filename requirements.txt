@@ -1,0 +1,4 @@
+## tao không tạo được venv. 
+# python -m venv .venv 
+# pip install django djangorestframework pillow kèm mấy cái khác
+# pip freeze > requirements.txt
