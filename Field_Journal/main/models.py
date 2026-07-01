@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import timedelta
 from django.contrib.auth.models import User #model User có sẵn của Django, tạo khi gọi UserCreationForm()
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Habit(models.Model):
@@ -29,5 +30,9 @@ class Task(models.Model):
 class Emotion(models.Model):
     status = models.CharField(max_length=50)
     icon = models.ImageField(upload_to='emotions/', null=True, blank=True)
-    ratings = models.PositiveIntegerField(default=0, min_value=1, max_value=10)
-    
+    ratings = models.PositiveIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(10)])
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class JournalImage(models.Model):
+    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name='images')  # type: ignore | Mising Journal Model
+    img = models.ImageField(upload_to='journal_images/')
