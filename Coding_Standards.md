@@ -8,7 +8,8 @@ ChatGPT bảo nên có cái này
 2. Sử dụng snake_case (không viết hoa) cho variables và function
 3. Sử dụng PascalCase cho class (model, serializer, class-base views, ...)
 4. Sử dụng Pascale_Snake_Case cho tên file (tao tự bịa)
+5. Related name = model's name + 's'
+vd: habit => related_name= 'habits'
 
 Khi dùng Source Control để push git, nhớ là kéo tất cả file vào Staged Changes rồi mới push được 
 
-giakhangdo hello abc
