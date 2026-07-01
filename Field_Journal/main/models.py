@@ -40,7 +40,7 @@ class Task(Reminder): #Task có phần reminder
 class TaskCheckBox(Task):
     pass
 class TaskAmount(Task): #tao mong cái inherite hoạt động, không thôi ăn cớt
-    total_amout= models.PositiveIntegerField()
+    total_amout= models.PositiveIntegerField(default= 1)
     current_amount= models.PositiveIntegerField(default= 0)
     unit= models.CharField(max_length=25)
 
