@@ -18,11 +18,11 @@ class Record(models.Model): #dùng cho calendar
     end_time= models.DateTimeField(auto_now=False, auto_now_add=False, 
                         default=(timezone.now().date()+ timedelta(days=1))
                         )
-    finish_time= models.DateTimeField(auto_now=False, auto_now_add=True) #finish.date() => ngày
+    finish_time= models.DateTimeField(auto_now=False, auto_now_add=False, null= True, blank= True) #finish.date() => ngày
     is_finished= models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.finish_time.date()} - {"finished" if self.is_finished else "unfinished"}'
+        return f'Start: {self.start_time} - {self.end_time} | {"finished" if self.is_finished else "unfinished"}'
 
 class Reminder(models.Model):
     remind_every= models.DurationField(default=timedelta(hours=1), null= True, blank= True)
