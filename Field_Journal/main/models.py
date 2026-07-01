@@ -1,6 +1,6 @@
+from .utils import get_default_time #chatgpt bảo là không gọi timezone trong model bởi vì timezone chỉ được gọi 1 lần lúc runserver thôi, không cập nhật
 from django.db import models
 from datetime import timedelta
-from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -22,17 +22,18 @@ class Record(models.Model):  # dùng cho calendar
     start_time = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
-        default=(timezone.now() + timedelta(hours=2)),
+        default= get_default_time(time_to_add= timedelta(hours= 2)) # chatpgt bảo phải gọi function dynamically.
     )
     end_time = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
-        default=(timezone.now().date() + timedelta(days=1)),
+        default= get_default_time(time_to_add= timedelta(days= 1))
     )
     finish_time = models.DateTimeField(
         auto_now=False, auto_now_add=False, null=True, blank=True
     )  # finish_time.date() => ngày
     is_finished = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f'Start: {self.start_time} - {self.end_time} | {"finished" if self.is_finished else "unfinished"}'
@@ -40,14 +41,14 @@ class Record(models.Model):  # dùng cho calendar
 
 class Reminder(models.Model):
     remind_every = models.DurationField(
-        default=timedelta(hours=1), null=True, blank=True
+        default=timedelta(hours= 1), null=True, blank=True
     )
     remind_at = models.DateField(
         auto_now=False, auto_now_add=False, null=True, blank=True
     )
 
 
-class Habit(models.Model, Reminder):  # Habit có phần reminder
+class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Reminder) => type error
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="habits")
     name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -57,18 +58,20 @@ class Habit(models.Model, Reminder):  # Habit có phần reminder
     best_streak = models.PositiveIntegerField(default=0)
     is_archived = models.BooleanField(default=False)
 
+    reminder= models.ForeignKey(Reminder, on_delete=models.CASCADE)
     record = GenericRelation(Record)  # reverse query
 
     def __str__(self):
         return self.name
 
 
-class Task(Reminder):  # Task có phần reminder
+class Task(models.Model):  # Task có phần reminder
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
     name = models.CharField(max_length=100)
     habit = models.ForeignKey(
         Habit, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True
     )
+    reminder= models.ForeignKey(Reminder, on_delete=models.CASCADE)
     record = GenericRelation(Record)  # reverse query
 
     def __str__(self):
