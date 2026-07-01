@@ -65,7 +65,6 @@ class Emotion(models.Model):
     status = models.CharField(max_length=50)
     icon = models.ImageField(upload_to='emotions/', null=True, blank=True)
     ratings = models.PositiveIntegerField(default=5, validators=[MinValueValidator(1), MaxValueValidator(10)])
-    created_at = models.DateTimeField(auto_now_add=True)
 
 class JournalImage(models.Model):
     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name='images')  # type: ignore | Mising Journal Model
