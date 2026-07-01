@@ -60,15 +60,6 @@ class Habit(models.Model, Reminder): #Habit có phần reminder
     def __str__(self):
         return self.name
     
-class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
-    name = models.CharField(max_length=100)
-    habit= models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='tasks')
-
-    def __str__(self):
-        return self.name
-    
-
 class Emotion(models.Model):
     status = models.CharField(max_length=50)
     icon = models.ImageField(upload_to='emotions/', null=True, blank=True)
