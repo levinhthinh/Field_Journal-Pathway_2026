@@ -25,3 +25,9 @@ class Task(models.Model):
     def __str__(self):
         return self.name
     
+
+class Emotion(models.Model):
+    status = models.CharField(max_length=50)
+    icon = models.ImageField(upload_to='emotions/', null=True, blank=True)
+    ratings = models.PositiveIntegerField(default=0, min_value=1, max_value=10)
+    
