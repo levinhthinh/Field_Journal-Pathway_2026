@@ -1,4 +1,4 @@
-from .utils import get_default_time #chatgpt bảo là không gọi timezone trong model bởi vì timezone chỉ được gọi 1 lần lúc runserver thôi, không cập nhật
+from .utils import default_time #chatgpt bảo là không gọi timezone trong model bởi vì timezone chỉ được gọi 1 lần lúc runserver thôi, không cập nhật
 from django.db import models
 from datetime import timedelta
 from django.core.validators import MinValueValidator, MaxValueValidator
@@ -22,12 +22,12 @@ class Record(models.Model):  # dùng cho calendar
     start_time = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
-        default= get_default_time(time_to_add= timedelta(hours= 2)) # chatpgt bảo phải gọi function dynamically.
+        default= default_time(time_to_add= timedelta(hours= 2)) # default nhận static value HOẶC expression, expression được gọi mỗi lần model được create
     )
     end_time = models.DateTimeField(
         auto_now=False,
         auto_now_add=False,
-        default= get_default_time(time_to_add= timedelta(days= 1))
+        default= default_time(time_to_add= timedelta(days= 1))
     )
     finish_time = models.DateTimeField(
         auto_now=False, auto_now_add=False, null=True, blank=True
