@@ -120,3 +120,6 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 USE_TZ = True  #Sử dụng timezone-aware datetime object
+
+MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_URL = '/media/'
