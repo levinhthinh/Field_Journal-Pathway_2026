@@ -3,14 +3,6 @@ from datetime import timedelta
 from django.contrib.auth.models import User #model User có sẵn của Django, tạo khi gọi UserCreationForm()
 
 # Create your models here.
-class Task(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
-    name = models.CharField(max_length=100)
-    habit= models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='tasks')
-
-    def __str__(self):
-        return self.name
-    
 class Habit(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='habits')
     name = models.CharField(max_length=100)
@@ -24,3 +16,12 @@ class Habit(models.Model):
 
     def __str__(self):
         return self.name
+    
+class Task(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
+    name = models.CharField(max_length=100)
+    habit= models.ForeignKey(Habit, on_delete=models.CASCADE, related_name='tasks')
+
+    def __str__(self):
+        return self.name
+    
