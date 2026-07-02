@@ -56,7 +56,7 @@ class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Rem
         auto_now=False, auto_now_add=False, null=True, blank=True
     )
 
-    record = GenericRelation(Record)  # reverse query
+    record = GenericRelation(Record, related_query_name='habits')  # reverse query
 
     def __str__(self):
         return self.name
@@ -77,7 +77,7 @@ class Task(models.Model):  # Task có phần reminder
         auto_now=False, auto_now_add=False, null=True, blank=True
     )
 
-    record = GenericRelation(Record)  # reverse query
+    record = GenericRelation(Record, related_query_name='tasks')  # reverse query
 
     def __str__(self):
         return self.name
