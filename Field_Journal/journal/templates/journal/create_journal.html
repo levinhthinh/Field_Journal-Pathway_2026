@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Viết Nhật Ký</title>
+</head>
+<body>
+    <h2>Thêm Nhật Ký Mới</h2>
+    
+    <!-- LƯU Ý: Phải có enctype="multipart/form-data" thì Django mới nhận được file ảnh -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <p>
+            <label>Cảm xúc (Emotion):</label>
+            <select name="emotion" required>
+                <option value="HAPPY">Happy 😀</option>
+                <option value="SAD">Sad 😢</option>
+                <option value="ANGRY">Angry 😡</option>
+                <option value="CALM">Calm 😌</option>
+            </select>
+        </p>
+
+        <p>
+            <label>Nội dung nhật ký:</label><br>
+            <textarea name="text" rows="5" cols="40" required></textarea>
+        </p>
+
+        <p>
+            <label>Yêu thích?</label>
+            <input type="checkbox" name="is_bookmark">
+        </p>
+
+        <p>
+            <!-- LƯU Ý: name="images" (phải trùng với getlist trong views.py) và bắt buộc phải có thuộc tính multiple -->
+            <label>Chọn nhiều ảnh cùng lúc:</label><br>
+            <input type="file" name="images" multiple accept="image/*" required>
+        </p>
+
+        <button type="submit">Lưu Nhật Ký & Tải ảnh lên S3</button>
+    </form>
+</body>
+</html>

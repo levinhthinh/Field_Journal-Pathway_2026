@@ -103,5 +103,5 @@ class Emotion(models.Model):
 
 
 class JournalImage(models.Model):
-    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name="images")  # type: ignore | Mising Journal Model
+    journal = models.ForeignKey("Journal", on_delete=models.CASCADE, related_name="images")
     img = models.ImageField(upload_to="journal_images/")
