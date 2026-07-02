@@ -3,8 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from .models import TaskCheckBox,  TaskAmount, Record
-from .serializers import TaskCheckBoxSerializer, TaskAmountSerializer, RecordSerializer
+from .models import TaskCheckBox, TaskAmount, Record
+from .serializer import TaskCheckBoxSerializer, TaskAmountSerializer, RecordSerializer
 
 #Nếu có User/ is authenticated => cho xem data
 class UserOwnedModelViewSet(viewsets.ModelViewSet):

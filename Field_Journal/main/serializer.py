@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import TaskCheckBox, TaskAmount, Record
+from .models import TaskCheckBox, TaskAmount, Record
 
 
 class RecordSerializer(serializers.ModelSerializer):

@@ -1,9 +1,19 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import ListView
 from .models import Journal, JournalImage
 
+class JournalHomeView(LoginRequiredMixin, ListView):
+    model = Journal
+    template_name = 'journal/home.html'
+    context_object_name = 'journals'
+    paginate_by = 10
+
+    def get_queryset(self):
+        return Journal.objects.filter(user=self.request.user).order_by('-created')
+
+@login_required
 def create_journal(request):
     if request.method == 'POST':
         emotion = request.POST.get('emotion')
@@ -32,7 +42,7 @@ def create_journal(request):
                 img=image,
                 meta_data=meta
             )
-            
-        return redirect('journal:create') # Sau khi lưu xong, tải lại chính trang này
+
+        return redirect('journal:home')  # Sau khi lưu xong, điều hướng về danh sách nhật ký
 
     return render(request, 'journal/create_journal.html')
