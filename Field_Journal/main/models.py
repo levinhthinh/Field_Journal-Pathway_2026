@@ -94,14 +94,14 @@ class TaskAmount(Task):  # tao mong cái inherite hoạt động, không thôi �
     unit = models.CharField(max_length=25)
 
 
-class Emotion(models.Model):
-    status = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to="emotions/", null=True, blank=True)
-    ratings = models.PositiveIntegerField(
-        default=5, validators=[MinValueValidator(1), MaxValueValidator(10)]
-    )
+# class Emotion(models.Model):
+#     status = models.TextChoices('status', 'happy sad angry')
+#     icon = models.ImageField(upload_to="emotions/", null=True, blank=True)
+#     ratings = models.PositiveIntegerField(
+#         default=5, validators=[MinValueValidator(1), MaxValueValidator(10)]
+#     )
 
 
-class JournalImage(models.Model):
-    journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name="images")  # type: ignore | Mising Journal Model
-    img = models.ImageField(upload_to="journal_images/")
+# class JournalImage(models.Model):
+#     journal = models.ForeignKey(Journal, on_delete=models.CASCADE, related_name="images")  # type: ignore | Mising Journal Model
+#     img = models.ImageField(upload_to="journal_images/")
