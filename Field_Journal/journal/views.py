@@ -10,7 +10,6 @@ def create_journal(request):
         text = request.POST.get('text')
         is_bookmark = request.POST.get('is_bookmark') == 'on'
         
-        # 1. Tạo và lưu Journal trước
         journal = Journal.objects.create(
             user=request.user,  # Đảm bảo user đã đăng nhập
             emotion=emotion,
