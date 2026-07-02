@@ -1,8 +1,10 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
-from .models import Task, TaskCheckBox, Record
-from .serializers import TaskSerializer, TaskCheckBoxSerializer, RecordSerializer
+from .models import TaskCheckBox,  TaskAmount, Record
+from .serializers import TaskCheckBoxSerializer, TaskAmountSerializer, RecordSerializer
 
 #Nếu có User/ is authenticated => cho xem data
 class UserOwnedModelViewSet(viewsets.ModelViewSet):
@@ -15,10 +17,7 @@ class UserOwnedModelViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer): #tạo model instance sẽ add User vào trong model
         serializer.save(user=self.request.user)
 
-class TaskCheckBoxViewSet(UserOwnedModelViewSet):
-    queryset = TaskCheckBox.objects.all()
-    serializer_class = TaskCheckBoxSerializer
-
+class BaseTaskViewSet(UserOwnedModelViewSet):
     def perform_create(self, serializer): #tự tạo record mỗi lần được task được create
         task = serializer.save(user=self.request.user)
         Record.objects.create(content_object=task)
@@ -36,3 +35,11 @@ class TaskCheckBoxViewSet(UserOwnedModelViewSet):
         serializer.save()
 
         return Response(serializer.data)
+class TaskCheckBoxViewSet(BaseTaskViewSet):
+    queryset = TaskCheckBox.objects.all()
+    serializer_class = TaskCheckBoxSerializer
+
+class TaskAmountViewSet(BaseTaskViewSet):
+    queryset = TaskAmount.objects.all()
+    serializer_class = TaskAmountSerializer
+
