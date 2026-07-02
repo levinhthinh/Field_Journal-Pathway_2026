@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'accounts',
     'main',
     'journal',
-    'storages',
 ]
 
 MIDDLEWARE = [
