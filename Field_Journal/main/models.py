@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from .utils import default_time #chatgpt bảo là không gọi timezone trong model bởi vì timezone chỉ được gọi 1 lần lúc runserver thôi, không cập nhật
 from django.db import models
 from datetime import timedelta
@@ -5,13 +6,12 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
-# model User có sẵn của Django, tạo khi gọi UserCreationForm()
-from django.contrib.auth.models import User
+User = get_user_model()
 
 
 # Create your models here.
 class Record(models.Model):  # dùng cho calendar
-    # cái này chatgpt tao không biết.
+    # cái này c hatgpt tao không biết.
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     # content_type: Model | object_id => Kết nối được với mọi model instances
@@ -103,5 +103,5 @@ class Emotion(models.Model):
 
 
 class JournalImage(models.Model):
-    journal = models.ForeignKey("Journal", on_delete=models.CASCADE, related_name="images")
+    journal = models.ForeignKey("journal.Journal", on_delete=models.CASCADE, related_name="main_journal_images")
     img = models.ImageField(upload_to="journal_images/")

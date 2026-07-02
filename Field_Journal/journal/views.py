@@ -16,12 +16,14 @@ class JournalHomeView(LoginRequiredMixin, ListView):
 @login_required
 def create_journal(request):
     if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
         emotion = request.POST.get('emotion')
         text = request.POST.get('text')
         is_bookmark = request.POST.get('is_bookmark') == 'on'
         
         journal = Journal.objects.create(
             user=request.user,  # Đảm bảo user đã đăng nhập
+            title=title,
             emotion=emotion,
             text=text,
             is_bookmark=is_bookmark

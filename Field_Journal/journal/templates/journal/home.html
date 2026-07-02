@@ -8,6 +8,7 @@
     <ul>
     {% for journal in journals %}
         <li>
+            <h3>{{ journal.title }}</h3>
             <strong>{{ journal.get_emotion_display }}</strong> - {{ journal.created|date:'Y-m-d H:i' }}
             <p>{{ journal.text|linebreaks }}</p>
             {% if journal.images.all %}

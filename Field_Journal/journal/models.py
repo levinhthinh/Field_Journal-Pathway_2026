@@ -16,6 +16,7 @@ class Journal(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journals')
+    title = models.CharField(max_length=200, default='', verbose_name='Tiêu đề')
     emotion = models.CharField(max_length=20, choices=EMOTION_CHOICES)
     text = models.TextField()
     is_bookmark = models.BooleanField(default=False)
@@ -23,7 +24,7 @@ class Journal(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Journal by {self.user.username} on {self.created.strftime('%Y-%m-%d')}"
+        return f"{self.title or 'Journal'} by {self.user.username} on {self.created.strftime('%Y-%m-%d')}"
 
 
 class JournalImage(models.Model):

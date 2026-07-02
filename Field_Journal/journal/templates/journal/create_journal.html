@@ -7,6 +7,11 @@
     {% csrf_token %}
 
     <p>
+        <label>Tiêu đề nhật ký:</label><br>
+        <input type="text" name="title" maxlength="200" required>
+    </p>
+
+    <p>
         <label>Cảm xúc (Emotion):</label>
         <select name="emotion" required>
             <option value="HAPPY">Happy 😀</option>
