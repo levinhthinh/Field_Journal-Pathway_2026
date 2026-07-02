@@ -38,16 +38,6 @@ class Record(models.Model):  # dùng cho calendar
     def __str__(self):
         return f'Start: {self.start_time} - {self.end_time} | {"finished" if self.is_finished else "unfinished"}'
 
-
-class Reminder(models.Model):
-    remind_every = models.DurationField(
-        default=timedelta(hours= 1), null=True, blank=True
-    )
-    remind_at = models.DateField(
-        auto_now=False, auto_now_add=False, null=True, blank=True
-    )
-
-
 class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Reminder) => type error
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="habits")
     name = models.CharField(max_length=100)
@@ -58,7 +48,14 @@ class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Rem
     best_streak = models.PositiveIntegerField(default=0)
     is_archived = models.BooleanField(default=False)
 
-    reminder= models.ForeignKey(Reminder, on_delete=models.CASCADE)
+    remind_every = models.DurationField(
+        default=timedelta(hours= 4), null=True, blank=True
+    )
+    remind_at = models.DateField(
+        default=default_time(timedelta(hours= 2)),
+        auto_now=False, auto_now_add=False, null=True, blank=True
+    )
+
     record = GenericRelation(Record)  # reverse query
 
     def __str__(self):
@@ -71,7 +68,15 @@ class Task(models.Model):  # Task có phần reminder
     habit = models.ForeignKey(
         Habit, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True
     )
-    reminder= models.ForeignKey(Reminder, on_delete=models.CASCADE)
+    
+    remind_every = models.DurationField(
+        default=timedelta(hours= 4), null=True, blank=True
+    )
+    remind_at = models.DateField(
+        default=default_time(timedelta(hours= 2)),
+        auto_now=False, auto_now_add=False, null=True, blank=True
+    )
+
     record = GenericRelation(Record)  # reverse query
 
     def __str__(self):
