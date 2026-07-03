@@ -30,35 +30,18 @@ class TaskCheckBoxSerializer(serializers.ModelSerializer):
     record= RecordSerializer(read_only=True)
     class Meta:
         model= TaskCheckBox
-        fields= (
-            'id',
-            'user',
-            'name',
-            'habit',
-            'remind_every',
-            'remind_at',
-        )
+        fields= '__all__'
 
-        read_only_fields=('user')
+        read_only_fields=('user', 'record')
 
 
 class TaskAmountSerializer(serializers.ModelSerializer):
     record= RecordSerializer(read_only=True)
     class Meta:
         model= TaskAmount
-        fields = (
-            'id',
-            'user',
-            'name',
-            'habit',
-            'remind_every',
-            'remind_at',
-            'total_amount',
-            'current_amount',
-            'unit',
-        )
+        fields = '__all__'
 
-        read_only_fields=('user')
+        read_only_fields=('user', 'record')
     
     def validate(self, attrs):
         current_amount= attrs.get('current_amount', getattr(self.instance, 'current_amount', None))
