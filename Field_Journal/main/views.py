@@ -8,7 +8,7 @@ from .serializer import TaskCheckBoxSerializer, TaskAmountSerializer, RecordSeri
 
 #Nếu có User/ is authenticated => cho xem data
 class UserOwnedModelViewSet(viewsets.ModelViewSet):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     #Mỗi Viewset ở dưới sẽ dùng chung function này
     def get_queryset(self): #lấy data về cho người dùng
