@@ -9,6 +9,9 @@
     </style>
 </head>
 <body>
+    <h1>{% if user.is_authenticated %}you are recognized{% endif %}</h1>
+    <h1>DUNG CAI NAY CHO IMAGE UPLOAD JOURNAL</h1>
+    <input type="file" name="upload_images" multiple>
     <div class="box">
         {% block content %}{% endblock %}
     </div>
