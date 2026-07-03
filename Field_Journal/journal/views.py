@@ -1,19 +1,19 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import ListView
 from .models import Journal, JournalImage
 
-class JournalHomeView(LoginRequiredMixin, ListView):
+class JournalHomeView(ListView):
     model = Journal
     template_name = 'journal/home.html'
     context_object_name = 'journals'
     paginate_by = 10
 
     def get_queryset(self):
-        return Journal.objects.filter(user=self.request.user).order_by('-created')
+        if self.request.user.is_authenticated:
+            return Journal.objects.filter(user=self.request.user).order_by('-created')
+        return Journal.objects.all().order_by('-created')
 
-@login_required
+
 def create_journal(request):
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
@@ -22,7 +22,7 @@ def create_journal(request):
         is_bookmark = request.POST.get('is_bookmark') == 'on'
         
         journal = Journal.objects.create(
-            user=request.user,  # Đảm bảo user đã đăng nhập
+            user=request.user if request.user.is_authenticated else None,
             title=title,
             emotion=emotion,
             text=text,

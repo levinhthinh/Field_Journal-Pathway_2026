@@ -15,7 +15,7 @@ class Journal(models.Model):
         ('CALM', 'Calm'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journals')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journals', null=True, blank=True)
     title = models.CharField(max_length=200, default='', verbose_name='Tiêu đề')
     emotion = models.CharField(max_length=20, choices=EMOTION_CHOICES)
     text = models.TextField()
@@ -24,7 +24,8 @@ class Journal(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"{self.title or 'Journal'} by {self.user.username} on {self.created.strftime('%Y-%m-%d')}"
+        username = self.user.username if self.user else 'Guest'
+        return f"{self.title or 'Journal'} by {username} on {self.created.strftime('%Y-%m-%d')}"
 
 
 class JournalImage(models.Model):
