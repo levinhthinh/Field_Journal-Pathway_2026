@@ -7,17 +7,16 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 class Journal(models.Model):
-    # Định nghĩa các lựa chọn cho Emotion (Ví dụ cơ bản)
-    EMOTION_CHOICES = [
-        ('HAPPY', 'Happy'),
-        ('SAD', 'Sad'),
-        ('ANGRY', 'Angry'),
-        ('CALM', 'Calm'),
-    ]
+    class EmotionChoices(models.TextChoices):
+        HAPPY= 'HAPPY', 'Happy',
+        SAD= 'SAD', 'Sad',
+        ANGRY= 'ANGRY', 'Angry',
+        CALM= 'CALM', 'Calm',
+        NEUTRAL= 'NEUTRAL', 'neutral'
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='journals', null=True, blank=True)
     title = models.CharField(max_length=200, default='', verbose_name='Tiêu đề')
-    emotion = models.CharField(max_length=20, choices=EMOTION_CHOICES)
+    emotion = models.CharField(max_length=20, choices=EmotionChoices.choices, default= EmotionChoices.NEUTRAL)
     text = models.TextField()
     is_bookmark = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)

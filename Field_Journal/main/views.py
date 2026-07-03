@@ -3,11 +3,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-<<<<<<< HEAD
 from .models import TaskCheckBox, TaskAmount, Record
-=======
-from .models import TaskCheckBox,  TaskAmount, Record
->>>>>>> a817627a3ceda1019710226f92f30f4d498662a5
 from .serializer import TaskCheckBoxSerializer, TaskAmountSerializer, RecordSerializer
 
 #Nếu có User/ is authenticated => cho xem data
