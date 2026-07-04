@@ -65,6 +65,35 @@ function toast(message, isError = false) {
   toast._t = setTimeout(() => (el.hidden = true), 2600);
 }
 
+function confirmModal(message) {
+  return new Promise((resolve) => {
+    const overlay = document.getElementById("confirm-modal");
+    document.getElementById("confirm-message").textContent = message;
+    overlay.hidden = false;
+
+    const okBtn = document.getElementById("confirm-ok");
+    const cancelBtn = document.getElementById("confirm-cancel");
+
+    function cleanup(result) {
+      overlay.hidden = true;
+      okBtn.removeEventListener("click", onOk);
+      cancelBtn.removeEventListener("click", onCancel);
+      overlay.removeEventListener("click", onOverlayClick);
+      document.removeEventListener("keydown", onKeydown);
+      resolve(result);
+    }
+    function onOk() { cleanup(true); }
+    function onCancel() { cleanup(false); }
+    function onOverlayClick(e) { if (e.target === overlay) cleanup(false); }
+    function onKeydown(e) { if (e.key === "Escape") cleanup(false); }
+
+    okBtn.addEventListener("click", onOk);
+    cancelBtn.addEventListener("click", onCancel);
+    overlay.addEventListener("click", onOverlayClick);
+    document.addEventListener("keydown", onKeydown);
+  });
+}
+
 function escapeHtml(str) {
   return (str ?? "").toString()
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -186,7 +215,10 @@ function renderTaskRow(task) {
     const pct = tot > 0 ? Math.min(100, Math.round((cur / tot) * 100)) : 0;
     progressHtml = `
       <div class="task-progress">
-        <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
+        <div class="progress-track" data-task-id="${task.id}">
+          <div class="progress-fill" style="width:${pct}%"></div>
+          <div class="progress-thumb" style="left:${pct}%"></div>
+        </div>
         <div class="progress-label">${cur} / ${tot} ${escapeHtml(task.unit || "")}</div>
         <div class="amount-controls">
           <button class="amount-btn" data-action="dec" aria-label="Decrease">&minus;</button>
@@ -217,6 +249,8 @@ function renderTaskRow(task) {
   if (done) li.querySelector(".task-card").classList.add("is-done");
 
   wireSwipe(li, task);
+  if (isAmount) wireProgressDrag(li, task);
+
   li.querySelector('[data-action="edit"]').addEventListener("click", () => openTaskForm(task));
   li.querySelector('[data-action="delete"]').addEventListener("click", () => deleteTask(task));
 
@@ -236,7 +270,7 @@ function wireSwipe(li, task) {
   const THRESHOLD = 90;
 
   function onDown(e) {
-    if (e.target.closest(".icon-btn") || e.target.closest(".amount-btn")) return;
+    if (e.target.closest(".icon-btn") || e.target.closest(".amount-btn") || e.target.closest(".progress-track") || isTaskDone(task)) return;
     startX = (e.touches ? e.touches[0].clientX : e.clientX);
     card.classList.add("dragging");
     window.addEventListener("pointermove", onMove);
@@ -244,6 +278,7 @@ function wireSwipe(li, task) {
     window.addEventListener("touchmove", onMove, { passive: true });
     window.addEventListener("touchend", onUp);
   }
+
   function onMove(e) {
     if (startX === null) return;
     const x = (e.touches ? e.touches[0].clientX : e.clientX);
@@ -286,6 +321,81 @@ async function completeTask(task) {
   }
 }
 
+
+function wireProgressDrag(li, task) {
+  const track = li.querySelector(".progress-track");
+  if (!track) return;
+
+  let dragging = false;
+
+  function ratioFromEvent(e) {
+    const rect = track.getBoundingClientRect();
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    return Math.min(1, Math.max(0, (x - rect.left) / rect.width));
+  }
+
+  function previewAt(ratio) {
+    const total = task.total_amout ?? task.total_amount ?? 0;
+    const value = Math.round(ratio * total);
+    const pct = total > 0 ? Math.min(100, Math.round((value / total) * 100)) : 0;
+    track.querySelector(".progress-fill").style.width = `${pct}%`;
+    track.querySelector(".progress-thumb").style.left = `${pct}%`;
+    const label = li.querySelector(".progress-label");
+    if (label) label.textContent = `${value} / ${total} ${task.unit || ""}`;
+    return value;
+  }
+
+  function onDown(e) {
+    if (e.target.closest(".amount-btn") || isTaskDone(task)) return;
+    dragging = true;
+    track.classList.add("dragging");
+    previewAt(ratioFromEvent(e));
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+    window.addEventListener("touchmove", onMove, { passive: true });
+    window.addEventListener("touchend", onUp);
+    e.preventDefault();
+  }
+  function onMove(e) {
+    if (dragging) previewAt(ratioFromEvent(e));
+  }
+  function onUp(e) {
+    if (!dragging) return;
+    dragging = false;
+    track.classList.remove("dragging");
+    const value = previewAt(ratioFromEvent(e));
+    window.removeEventListener("pointermove", onMove);
+    window.removeEventListener("pointerup", onUp);
+    window.removeEventListener("touchmove", onMove);
+    window.removeEventListener("touchend", onUp);
+    setAmount(task, value);
+  }
+
+  track.addEventListener("pointerdown", onDown);
+  track.addEventListener("touchstart", onDown, { passive: false });
+}
+
+async function setAmount(task, value) {
+  const base = currentTaskApi();
+  const total = task.total_amout ?? task.total_amount ?? 0;
+  const clamped = Math.max(0, Math.min(total, value));
+  try {
+    const updated = await api(detailUrl(base, task.id), {
+      method: "PATCH",
+      body: { current_amount: clamped },
+    });
+    Object.assign(task, updated);
+    if (total > 0 && clamped >= total && !isTaskDone(task)) {
+      await completeTask(task);
+    }
+    renderTasks();
+  } catch (err) {
+    console.error(err);
+    toast("Couldn't update amount", true);
+    renderTasks();
+  }
+}
+
 async function bumpAmount(task, delta) {
   const base = currentTaskApi();
   const next = Math.max(0, (task.current_amount ?? 0) + delta);
@@ -307,7 +417,8 @@ async function bumpAmount(task, delta) {
 }
 
 async function deleteTask(task) {
-  if (!confirm(`Delete "${task.name}"?`)) return;
+  const ok = await confirmModal(`Delete "${task.name}"?`);
+  if (!ok) return;
   const base = currentTaskApi();
   try {
     await api(detailUrl(base, task.id), { method: "DELETE" });
@@ -447,12 +558,17 @@ function renderJournalCard(entry) {
     </div>
   `;
 
+  card.addEventListener("click", (e) => {
+    if (e.target.closest(".icon-btn") || e.target.closest(".journal-thumb")) return;
+    window.location.href = `/journal/entry/${entry.id}/`;
+  });
+
   card.querySelectorAll(".journal-thumb").forEach((img, idx) =>
     img.addEventListener("click", () => openLightbox(images, idx))
   );
-  card.querySelector('[data-action="bookmark"]').addEventListener("click", () => toggleBookmark(entry));
-  card.querySelector('[data-action="edit"]').addEventListener("click", () => openJournalForm(entry));
-  card.querySelector('[data-action="delete"]').addEventListener("click", () => deleteJournal(entry));
+  card.querySelector('[data-action="bookmark"]').addEventListener("click", (e) => { e.stopPropagation(); toggleBookmark(entry); });
+  card.querySelector('[data-action="edit"]').addEventListener("click", (e) => { e.stopPropagation(); openJournalForm(entry); });
+  card.querySelector('[data-action="delete"]').addEventListener("click", (e) => { e.stopPropagation(); deleteJournal(entry); });
 
   return card;
 }
@@ -472,7 +588,8 @@ async function toggleBookmark(entry) {
 }
 
 async function deleteJournal(entry) {
-  if (!confirm(`Delete "${entry.title || "this entry"}"?`)) return;
+  const ok = await confirmModal(`Delete "${entry.title || "this entry"}"?`);
+  if (!ok) return;
   try {
     await api(detailUrl(API.journal, entry.id), { method: "DELETE" });
     state.journals = state.journals.filter((j) => j.id !== entry.id);

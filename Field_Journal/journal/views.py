@@ -52,6 +52,9 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+
 from .models import Journal, JournalImage
 from .serializer import JournalSerializer
 
@@ -80,3 +83,11 @@ class JournalViewSet(viewsets.ModelViewSet):
                 journal=journal,
                 img=image,
             )
+
+@login_required
+def emotion_chart_view(request):
+    return render(request, 'emotion_chart.html')
+
+@login_required
+def journal_detail_view(request, pk):
+    return render(request, 'journal_detail.html', {'journal_id': pk})

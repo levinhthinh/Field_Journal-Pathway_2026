@@ -455,6 +455,7 @@ button{ font-family: inherit; cursor: pointer; }
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   padding: 18px 20px;
+  cursor: pointer;
 }
 
 .journal-card-top{
@@ -485,12 +486,14 @@ button{ font-family: inherit; cursor: pointer; }
 
 .journal-actions{ display: flex; gap: 6px; }
 
-.journal-text{
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text-mid);
-  margin: 8px 0 0;
-  white-space: pre-wrap;
+.journal-text {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .journal-images{
@@ -578,4 +581,218 @@ button{ font-family: inherit; cursor: pointer; }
   .pane{ border-bottom: 1px solid var(--line); }
   .topbar{ padding: 16px 18px; }
   .pane{ padding: 22px 18px 36px; }
+}
+
+
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 7, 16, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirm-overlay[hidden] {
+  display: none;
+}
+
+.confirm-box {
+  background: #221933;
+  border: 1px solid #38294f;
+  border-radius: 14px;
+  padding: 28px 26px 22px;
+  max-width: 340px;
+  width: 90%;
+}
+
+.confirm-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 19px;
+  color: #f2eee7;
+  margin: 0 0 8px;
+}
+
+.confirm-message {
+  font-size: 14px;
+  color: #a599bb;
+  line-height: 1.5;
+  margin: 0 0 22px;
+}
+
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-danger {
+  background: #d3665f;
+  color: #2a1414;
+  border: none;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
+}
+.btn-danger:hover { background: #c0524b; }
+
+
+
+.fab-chart {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #a78bfa;
+  color: #2a1f47;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+  z-index: 500;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.fab-chart:hover { background: #8f77e8; transform: scale(1.05); }
+.fab-chart:active { transform: scale(0.96); }
+
+.chart-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 20px;
+}
+
+.chart-card {
+  background: #221933;
+  border: 1px solid #38294f;
+  border-radius: 16px;
+  padding: 28px 28px 20px;
+}
+
+.chart-card h2 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.chart-subtitle {
+  color: #a599bb;
+  font-size: 13.5px;
+  margin: 0 0 24px;
+}
+
+.chart-empty {
+  color: #837a97;
+  font-size: 14px;
+  text-align: center;
+  padding: 40px 0;
+}
+
+.back-link {
+  display: inline-block;
+  color: #a599bb;
+  font-size: 13.5px;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+.back-link:hover { color: #f2eee7; }
+
+.progress-track {
+  position: relative;
+  cursor: pointer;
+  touch-action: none;
+  padding: 8px 0;
+}
+
+.progress-track.dragging .progress-thumb {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.progress-thumb {
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #a78bfa;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25);
+  pointer-events: none;
+  transition: transform 0.1s ease;
+}
+
+.task-card.is-done .progress-track {
+  cursor: not-allowed;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.detail-card {
+  background: #221933;
+  border: 1px solid #38294f;
+  border-radius: 16px;
+  padding: 28px 32px 32px;
+}
+
+.detail-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.detail-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 24px;
+  margin: 0 0 6px;
+}
+
+.detail-date {
+  color: #a599bb;
+  font-size: 13px;
+}
+
+.detail-bookmark {
+  color: #a78bfa;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.detail-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #f2eee7;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  margin: 0 0 24px;
+}
+
+.detail-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.detail-image {
+  width: 100%;
+  border-radius: 10px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.detail-loading,
+.detail-error {
+  color: #837a97;
+  font-size: 14px;
 }

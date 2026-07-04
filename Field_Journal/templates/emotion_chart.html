@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="chart-page">
+  <a href="{% url 'home' %}" class="back-link">&larr; Back to dashboard</a>
+  <div class="chart-card">
+    <h2>Your week in emotions</h2>
+    <p class="chart-subtitle">Average emotion rating per day, last 7 days.</p>
+    <canvas id="emotion-canvas" height="260"></canvas>
+    <p id="chart-empty" class="chart-empty" hidden>No journal entries yet this week — write one to start tracking.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="{% static 'js/emotion_chart.js' %}"></script>
+{% endblock %}

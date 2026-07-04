@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="chart-page">
+  <a href="{% url 'home' %}" class="back-link">&larr; Back to dashboard</a>
+  <div class="detail-card" id="detail-card" data-journal-id="{{ journal_id }}">
+    <p class="detail-loading">Loading entry...</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/journal_detail.js' %}"></script>
+{% endblock %}

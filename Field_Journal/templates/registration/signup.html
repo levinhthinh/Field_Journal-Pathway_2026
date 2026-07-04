@@ -1,9 +1,237 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2>Sign Up</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Account</button>
-</form>
+<style>
+  main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+
+  .panel-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto;
+  }
+
+  .stitching {
+    position: absolute;
+    left: -18px;
+    top: 28px;
+    bottom: 28px;
+    width: 2px;
+    background: repeating-linear-gradient(
+      to bottom,
+      #4a3969 0px, #4a3969 6px, transparent 6px, transparent 13px
+    );
+  }
+
+  .card {
+    background: #221933;
+    border: 1px solid #38294f;
+    border-radius: 16px;
+    padding: 40px 36px 32px;
+  }
+
+  .card-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    background: linear-gradient(160deg, #b9a4f5, #8f77e8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: #241a3d;
+    margin: 0 auto 20px;
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 25px;
+    text-align: center;
+    margin: 0 0 6px;
+    color: #f2eee7;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #a599bb;
+    font-size: 13.5px;
+    line-height: 1.5;
+    margin: 0 0 28px;
+  }
+
+  .card form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .card label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: #a599bb;
+    margin-bottom: 6px;
+    letter-spacing: 0.02em;
+  }
+
+  .card input[type="text"],
+  .card input[type="password"] {
+    width: 100%;
+    background: #1a1326;
+    border: 1px solid #3c2d54;
+    border-radius: 9px;
+    padding: 11px 13px;
+    font-size: 14.5px;
+    color: #f2eee7;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .card input::placeholder { color: #6f6386; }
+
+  .card input:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.18);
+  }
+
+  .help-text {
+    font-size: 12px;
+    color: #837a97;
+    margin: 6px 0 0;
+    line-height: 1.5;
+  }
+
+  .help-list {
+    font-size: 12px;
+    color: #837a97;
+    margin: 6px 0 0;
+    padding-left: 18px;
+    line-height: 1.6;
+  }
+
+  .field-error {
+    color: #e29a9a;
+    font-size: 12.5px;
+    margin: 6px 0 0;
+  }
+
+  .form-errors {
+    background: rgba(210, 100, 100, 0.12);
+    border: 1px solid rgba(210, 100, 100, 0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    color: #e29a9a;
+    font-size: 13px;
+  }
+
+  button.submit {
+    margin-top: 6px;
+    background: #a78bfa;
+    color: #2a1f47;
+    border: none;
+    border-radius: 999px;
+    padding: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.05s ease;
+  }
+  button.submit:hover { background: #7c5cf0; }
+  button.submit:active { transform: scale(0.98); }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #6f6386;
+    font-size: 12px;
+    margin: 22px 0 18px;
+  }
+  .divider::before, .divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #38294f;
+  }
+
+  .signin {
+    text-align: center;
+    font-size: 13.5px;
+    color: #a599bb;
+  }
+</style>
+
+<main>
+  <div class="panel-wrap">
+    <div class="stitching"></div>
+    <div class="card">
+      <div class="card-icon">FJ</div>
+      <h2>Create your account</h2>
+      <p class="subtitle">Start keeping your tasks and journal entries in one place.</p>
+
+      {% if form.non_field_errors %}
+      <div class="form-errors">
+        {% for error in form.non_field_errors %}
+          <p style="margin:0;">{{ error }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+
+        <div>
+          <label for="{{ form.username.id_for_label }}">Username</label>
+          {{ form.username }}
+          {% if form.username.help_text %}
+            <p class="help-text">{{ form.username.help_text|safe }}</p>
+          {% endif %}
+          {% if form.username.errors %}
+            <p class="field-error">{{ form.username.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.password1.id_for_label }}">Password</label>
+          {{ form.password1 }}
+          {% if form.password1.help_text %}
+            <ul class="help-list">
+              {{ form.password1.help_text|safe }}
+            </ul>
+          {% endif %}
+          {% if form.password1.errors %}
+            <p class="field-error">{{ form.password1.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="{{ form.password2.id_for_label }}">Confirm password</label>
+          {{ form.password2 }}
+          {% if form.password2.help_text %}
+            <p class="help-text">{{ form.password2.help_text }}</p>
+          {% endif %}
+          {% if form.password2.errors %}
+            <p class="field-error">{{ form.password2.errors|striptags }}</p>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="submit">Create account</button>
+      </form>
+
+      <div class="divider">or</div>
+      <p class="signin">Already have an account? <a href="{% url 'login' %}" style="color:#a78bfa;">Sign in</a></p>
+    </div>
+  </div>
+</main>
 {% endblock %}

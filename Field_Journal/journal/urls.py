@@ -10,4 +10,6 @@ router.register(r"journal", JournalViewSet, basename='journal')
 
 urlpatterns = [
     path("", include(router.urls)),
+    path("chart/", views.emotion_chart_view, name="emotion-chart"),
+    path("entry/<int:pk>/", views.journal_detail_view, name="journal-detail"),
 ]
