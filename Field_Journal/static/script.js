@@ -8,7 +8,7 @@
    ===================================================================== */
 const API = {
   journal:       "/journal/journal/",        // JournalViewSet (router default)
-  taskCheckbox:  "/main/taskcheckboxes/",    // TaskCheckBoxViewSet
+  taskCheckbox:  "/main/task-checkboxes/",    // TaskCheckBoxViewSet
   taskAmount:    "/main/task-amount/",       // TaskAmountViewSet
 };
 
@@ -553,20 +553,6 @@ async function saveJournal(entry) {
     toast("Couldn't save entry — see console", true);
   }
 }
-
-/* ===================================================================
-   Lightbox
-   =================================================================== */
-function openLightbox(src) {
-  document.getElementById("lightbox-img").src = src;
-  document.getElementById("lightbox").hidden = false;
-}
-document.getElementById("lightbox-close").addEventListener("click", () => {
-  document.getElementById("lightbox").hidden = true;
-});
-document.getElementById("lightbox").addEventListener("click", (e) => {
-  if (e.target.id === "lightbox") document.getElementById("lightbox").hidden = true;
-});
 
 /* ===================================================================
    GO
