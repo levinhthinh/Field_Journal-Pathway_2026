@@ -2,23 +2,44 @@
 <html>
 <head>
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; display: flex; justify-content: center; padding-top: 50px; }
-        .box { background: white; padding: 20px; border-radius: 8px; width: 400px; box-shadow: 0 2px 5px #ccc; }
-        input { width: 100%; padding: 8px; margin: 10px 0; border: 1px solid #ddd; box-sizing: border-box; }
-        button { width: 100%; padding: 10px; background: #333; color: white; border: none; cursor: pointer; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; min-height: 100vh; background: #eef2f5; }
+
+        nav { background: #2c3e50; color: white; padding: 1rem 2rem; display: flex; justify-content: space-between; }
+        nav a { color: #ecf0f1; text-decoration: none; margin-left: 20px; font-weight: bold; }
+
+        .container { display: flex; flex: 1; padding: 20px; gap: 20px; }
+        .sidebar { width: 250px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .main-content { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        
+        footer { background: #2c3e50; color: white; text-align: center; padding: 15px; }
     </style>
 </head>
 <body>
-    <div class="box">
-        {% if user.is_authenticated %}
-            <p>You are recognized</p>
-        {% endif %}
+
+    <nav>
+        <div><strong>Field_Journal Dashboard</strong></div>
+        <div>
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Log In</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="sidebar">
+            <h3>Menu</h3>
+            <p>📁 My Journal</p>
+            <p>📊 Analytics</p>
+            <p>⚙️ Settings</p>
+        </div>
         
-        <h1>Image Upload</h1>
-
-        {% block content %}{% endblock %}
-
-        <input type="file" name="upload_images" multiple>
+        <div class="main-content">
+            {% block content %}{% endblock %}
+        </div>
     </div>
+
+    <footer>&copy; 2026 Field_Journal Project</footer>
+
 </body>
 </html>
