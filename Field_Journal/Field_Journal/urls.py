@@ -16,7 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+#for static files serving
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from accounts import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
@@ -24,3 +29,8 @@ urlpatterns = [
     path('journal/', include('journal.urls')),
     path('', views.home, name='home')
 ]
+urlpatterns += staticfiles_urlpatterns()
+
+# Serves user-uploaded media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

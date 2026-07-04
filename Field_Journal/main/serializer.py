@@ -17,7 +17,7 @@ class RecordSerializer(serializers.ModelSerializer):
         finish_time= attrs.get('finish_time', getattr(self.instance, 'finish_time', None))
         if (start_time is not None and
             end_time is not None and
-            start_time <= end_time):
+            start_time >= end_time):
             raise serializers.ValidationError('Start time bé hơn end time')
 
         if (is_finished is not None and

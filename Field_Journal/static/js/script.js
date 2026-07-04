@@ -15,12 +15,12 @@ const API = {
 // You told me detail ops use `?id=` as a query param rather than a path
 // segment. If that's not quite right, this is the only place to fix it.
 function detailUrl(base, id) {
-  return `${base}?id=${encodeURIComponent(id)}`;
+  return `${base}${encodeURIComponent(id)}/`;
 }
 // The `record` custom @action (PATCH) on BaseTaskViewSet — adjust the
 // path shape here if your router mounts it differently.
 function recordUrl(base, id) {
-  return `${base}record/?id=${encodeURIComponent(id)}`;
+  return `${base}${encodeURIComponent(id)}/record/`;
 }
 
 /* ===================================================================
@@ -74,6 +74,22 @@ function fmtDate(iso) {
   if (!iso) return "";
   const d = new Date(iso);
   return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+}
+
+// Django DurationField <-> <input type="time"> conversions.
+// Django returns/accepts strings like "4:00:00" or "04:00:00" (H:MM:SS,
+// optionally with a leading "D " day count which we don't use here).
+function durationToHHMM(dur) {
+  if (!dur) return "";
+  const match = String(dur).match(/(\d+):(\d{2}):\d{2}(\.\d+)?$/);
+  if (!match) return "";
+  const hh = String(match[1]).padStart(2, "0");
+  return `${hh}:${match[2]}`;
+}
+function hhmmToDuration(hhmm) {
+  if (!hhmm) return null;
+  const [hh, mm] = hhmm.split(":");
+  return `${Number(hh)}:${mm}:00`;
 }
 
 /* ===================================================================
@@ -279,6 +295,10 @@ async function bumpAmount(task, delta) {
       body: { current_amount: next },
     });
     Object.assign(task, updated);
+    const total = task.total_amout ?? task.total_amount ?? 0;
+    if (total > 0 && next >= total && !isTaskDone(task)) {
+      await completeTask(task);
+    }
     renderTasks();
   } catch (err) {
     console.error(err);
@@ -322,8 +342,8 @@ function openTaskForm(task) {
           <input type="date" id="tf-remind-at" value="${task?.remind_at || ""}">
         </div>
         <div class="field">
-          <label for="tf-remind-every">Remind every (hours)</label>
-          <input type="number" min="0" id="tf-remind-every" value="${task?.remind_every_hours ?? ""}">
+          <label for="tf-remind-every">Remind every (hh:mm)</label>
+          <input type="time" id="tf-remind-every" value="${durationToHHMM(task?.remind_every)}">
         </div>
       </div>
       ${isAmount ? `
@@ -353,12 +373,12 @@ function openTaskForm(task) {
 
 async function saveTask(task, isAmount) {
   const base = isAmount ? API.taskAmount : API.taskCheckbox;
-  const remindEveryHrs = document.getElementById("tf-remind-every").value;
+  const remindEveryHHMM = document.getElementById("tf-remind-every").value;
 
   const payload = {
     name: document.getElementById("tf-name").value.trim(),
     remind_at: document.getElementById("tf-remind-at").value || null,
-    remind_every: remindEveryHrs ? `${remindEveryHrs}:00:00` : null,
+    remind_every: hhmmToDuration(remindEveryHHMM),
   };
   if (isAmount) {
     payload.total_amout = Number(document.getElementById("tf-total").value || 1);
@@ -427,8 +447,8 @@ function renderJournalCard(entry) {
     </div>
   `;
 
-  card.querySelectorAll(".journal-thumb").forEach((img) =>
-    img.addEventListener("click", () => openLightbox(img.src))
+  card.querySelectorAll(".journal-thumb").forEach((img, idx) =>
+    img.addEventListener("click", () => openLightbox(images, idx))
   );
   card.querySelector('[data-action="bookmark"]').addEventListener("click", () => toggleBookmark(entry));
   card.querySelector('[data-action="edit"]').addEventListener("click", () => openJournalForm(entry));
@@ -553,6 +573,65 @@ async function saveJournal(entry) {
     toast("Couldn't save entry — see console", true);
   }
 }
+
+/* ===================================================================
+   Lightbox — supports Esc / click-outside to close, arrow keys and
+   on-screen buttons to move between an entry's images.
+   =================================================================== */
+const lightboxState = { images: [], index: 0 };
+
+function openLightbox(images, index) {
+  lightboxState.images = images;
+  lightboxState.index = index;
+  renderLightboxImage();
+  document.getElementById("lightbox").hidden = false;
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").hidden = true;
+}
+
+function renderLightboxImage() {
+  const { images, index } = lightboxState;
+  document.getElementById("lightbox-img").src = images[index];
+  const prevBtn = document.getElementById("lightbox-prev");
+  const nextBtn = document.getElementById("lightbox-next");
+  const multi = images.length > 1;
+  prevBtn.hidden = !multi;
+  nextBtn.hidden = !multi;
+  prevBtn.disabled = index === 0;
+  nextBtn.disabled = index === images.length - 1;
+}
+
+function lightboxPrev() {
+  if (lightboxState.index > 0) {
+    lightboxState.index -= 1;
+    renderLightboxImage();
+  }
+}
+function lightboxNext() {
+  if (lightboxState.index < lightboxState.images.length - 1) {
+    lightboxState.index += 1;
+    renderLightboxImage();
+  }
+}
+
+document.getElementById("lightbox-close").addEventListener("click", (e) => { e.stopPropagation(); closeLightbox(); });
+document.getElementById("lightbox-prev").addEventListener("click", (e) => { e.stopPropagation(); lightboxPrev(); });
+document.getElementById("lightbox-next").addEventListener("click", (e) => { e.stopPropagation(); lightboxNext(); });
+
+// Click anywhere outside the image itself (including near the edges) closes it.
+document.getElementById("lightbox").addEventListener("click", (e) => {
+  if (e.target.id !== "lightbox-img") closeLightbox();
+});
+
+// Esc to close, arrow keys to navigate — only while the lightbox is open.
+document.addEventListener("keydown", (e) => {
+  if (document.getElementById("lightbox").hidden) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") lightboxPrev();
+  if (e.key === "ArrowRight") lightboxNext();
+});
 
 /* ===================================================================
    GO

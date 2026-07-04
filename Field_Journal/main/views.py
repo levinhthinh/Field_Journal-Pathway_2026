@@ -25,9 +25,11 @@ class BaseTaskViewSet(UserOwnedModelViewSet):
     @action(detail=True, methods=["patch"]) #update data cho record 
     def record(self, request, pk=None):
         task = self.get_object()
-
+        record_obj = task.record.first()
+        if record_obj is None: return Response({"detail": "No record exists for this task."}, status=404)
+        
         serializer = RecordSerializer(
-            task.record,
+            record_obj,
             data=request.data,
             partial=True,
         )
