@@ -13,19 +13,10 @@ class JournalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Journal
-        fields = (
-            "id",
-            "title",
-            "emotion",
-            "text",
-            "is_bookmark",
-            "created",
-            "updated",
-            "images",
-            "upload_images",
-        )
+        fields = '__all__'
         read_only_fields = (
             "id",
+            "user",
             "created",
             "updated",
             "images",

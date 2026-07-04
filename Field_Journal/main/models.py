@@ -40,7 +40,7 @@ class Record(models.Model):  # dùng cho calendar
 
 class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Reminder) => type error
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="habits")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100) #unique=True lát nữa rồi thêm
     created_at = models.DateTimeField(auto_now_add=True)
     duration = models.DurationField(default=timedelta(days=2))
 
@@ -64,7 +64,7 @@ class Habit(models.Model):  #Habit có phần reminder | Habit(models.Model, Rem
 
 class Task(models.Model):  # Task có phần reminder
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="tasks")
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100) #unique=True lát nữa rồi thêm
     habit = models.ForeignKey(
         Habit, on_delete=models.CASCADE, related_name="tasks", null=True, blank=True
     )
@@ -88,7 +88,7 @@ class TaskCheckBox(Task):
     pass
 
 
-class TaskAmount(Task):  # tao mong cái inherite hoạt động, không thôi ăn cớt
+class TaskAmount(Task): 
     total_amout = models.PositiveIntegerField(default=1)
     current_amount = models.PositiveIntegerField(default=0)
     unit = models.CharField(max_length=25)
