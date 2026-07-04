@@ -27,21 +27,29 @@ class RecordSerializer(serializers.ModelSerializer):
         return attrs
 
 class TaskCheckBoxSerializer(serializers.ModelSerializer):
-    record= RecordSerializer(read_only=True)
+    record = serializers.SerializerMethodField()
     class Meta:
         model= TaskCheckBox
         fields= '__all__'
 
         read_only_fields=('user', 'record')
 
+    def get_record(self, obj):
+        record = obj.record.first()
+        return RecordSerializer(record).data if record else None
+
 
 class TaskAmountSerializer(serializers.ModelSerializer):
-    record= RecordSerializer(read_only=True)
+    record = serializers.SerializerMethodField()
     class Meta:
         model= TaskAmount
         fields = '__all__'
 
         read_only_fields=('user', 'record')
+    
+    def get_record(self, obj):
+        record = obj.record.first()
+        return RecordSerializer(record).data if record else None
     
     def validate(self, attrs):
         current_amount= attrs.get('current_amount', getattr(self.instance, 'current_amount', None))
@@ -50,6 +58,6 @@ class TaskAmountSerializer(serializers.ModelSerializer):
         if (current_amount is not None and
             total_amount is not None and 
             current_amount >= total_amount):
-            return serializers.ValidationError('current amount >= total amount')
+            raise serializers.ValidationError('current amount >= total amount')
         
         return attrs
