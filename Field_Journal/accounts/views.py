@@ -3,7 +3,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 
 def home(request):
-    return render(request, 'base.html')
+    return render(request, 'ipip/home.html')
 
 def SignupView(request):
     if request.method == 'POST':

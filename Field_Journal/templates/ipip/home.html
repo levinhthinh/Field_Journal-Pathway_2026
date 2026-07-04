@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+{% if user.is_authenticated %}
+
+  <main class="split">
+
+    <!-- LEFT: TO-DO -->
+    <section class="pane pane-todo" aria-label="To-do">
+      <div class="pane-header">
+        <h2>To&#8209;Do</h2>
+        <button class="add-btn" id="add-task-btn" type="button">+ New task</button>
+      </div>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="checkbox" role="tab" aria-selected="true">Checklist</button>
+        <button class="tab" data-tab="amount" role="tab" aria-selected="false">Tracked</button>
+      </div>
+
+      <div id="task-form-slot" class="form-slot"></div>
+
+      <p class="hint">Swipe a task left to mark it done. Tap the pencil to edit.</p>
+
+      <ul id="task-list" class="task-list"></ul>
+      <p id="task-empty" class="empty-state" hidden>Nothing here yet. Add your first task above.</p>
+    </section>
+
+    <div class="seam" aria-hidden="true">
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <!-- RIGHT: JOURNAL -->
+    <section class="pane pane-journal" aria-label="Journal">
+      <div class="pane-header">
+        <h2>Journal</h2>
+        <button class="add-btn" id="add-journal-btn" type="button">+ New entry</button>
+      </div>
+
+      <div id="journal-form-slot" class="form-slot"></div>
+
+      <div id="journal-feed" class="journal-feed"></div>
+      <p id="journal-empty" class="empty-state" hidden>No entries yet. Write down how today felt.</p>
+    </section>
+
+  </main>
+
+{% else %}
+
+  <div class="signin-screen">
+    <div class="signin-card">
+      <span class="brand-mark">FJ</span>
+      <h1>Welcome back</h1>
+      <p>Sign in to see your tasks and journal entries.</p>
+      <a class="primary-btn" href="/accounts/login/?next={{ request.path }}">Sign in</a>
+    </div>
+  </div>
+
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if user.is_authenticated %}
+<script src="{% static 'script.js' %}"></script>
+{% endif %}
+{% endblock %}
