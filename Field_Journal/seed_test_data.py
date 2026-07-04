@@ -22,3 +22,5 @@ for i, rating in enumerate(ratings):
     )
 
 print("Done — created", len(ratings), "test entries.")
+
+# !!!!!!! test file của t, xin đừng chạm
