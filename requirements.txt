@@ -1,4 +1,5 @@
-## tao không tạo được venv. 
-# python -m venv .venv 
-# pip install django djangorestframework pillow kèm mấy cái khác
-# pip freeze > requirements.txt
+asgiref==3.11.1
+Django==6.0.7
+djangorestframework==3.17.1
+pillow==12.3.0
+sqlparse==0.5.5
