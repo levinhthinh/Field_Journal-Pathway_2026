@@ -42,10 +42,22 @@ function renderEntry(entry) {
       </div>
       <span class="emotion-badge emotion-${entry.emotion}">${(entry.emotion || "").toLowerCase()} &middot; ${entry.emotion_rating}/10</span>
     </div>
-    ${entry.is_bookmark ? `<div class="detail-bookmark">&#9733; Bookmarked</div>` : ""}
     <p class="detail-text">${escapeHtml(entry.text)}</p>
     ${imagesHtml}
   `;
+  // Bỏ phần Bookmark
+  // card.innerHTML = `
+  //   <div class="detail-top">
+  //     <div>
+  //       <h2 class="detail-title">${escapeHtml(entry.title || "Untitled")}</h2>
+  //       <span class="detail-date">${fmtDate(entry.created)}</span>
+  //     </div>
+  //     <span class="emotion-badge emotion-${entry.emotion}">${(entry.emotion || "").toLowerCase()} &middot; ${entry.emotion_rating}/10</span>
+  //   </div>
+  //   ${entry.is_bookmark ? `<div class="detail-bookmark">&#9733; Bookmarked</div>` : ""}
+  //   <p class="detail-text">${escapeHtml(entry.text)}</p>
+  //   ${imagesHtml}
+  // `;
 
   card.querySelectorAll(".detail-image").forEach((img, idx) =>
     img.addEventListener("click", () => openLightbox(images, idx))

@@ -194,10 +194,12 @@ function renderTasks() {
   const empty = document.getElementById("task-empty");
   const tasks = currentTaskList();
 
+  const sorted = [...tasks].sort((a, b) => isTaskDone(a) - isTaskDone(b));
+
   list.innerHTML = "";
   empty.hidden = tasks.length > 0;
 
-  tasks.forEach((task) => list.appendChild(renderTaskRow(task)));
+  sorted.forEach((task) => list.appendChild(renderTaskRow(task)));
 }
 
 function renderTaskRow(task) {
@@ -552,7 +554,6 @@ function renderJournalCard(entry) {
     <p class="journal-text">${escapeHtml(entry.text)}</p>
     ${imagesHtml}
     <div class="journal-actions" style="margin-top:12px;">
-      <button class="icon-btn bookmark-btn ${entry.is_bookmark ? "active" : ""}" data-action="bookmark" aria-label="Bookmark">&#9733;</button>
       <button class="icon-btn" data-action="edit" aria-label="Edit entry">&#9998;</button>
       <button class="icon-btn danger" data-action="delete" aria-label="Delete entry">&#10005;</button>
     </div>
@@ -566,25 +567,10 @@ function renderJournalCard(entry) {
   card.querySelectorAll(".journal-thumb").forEach((img, idx) =>
     img.addEventListener("click", () => openLightbox(images, idx))
   );
-  card.querySelector('[data-action="bookmark"]').addEventListener("click", (e) => { e.stopPropagation(); toggleBookmark(entry); });
   card.querySelector('[data-action="edit"]').addEventListener("click", (e) => { e.stopPropagation(); openJournalForm(entry); });
   card.querySelector('[data-action="delete"]').addEventListener("click", (e) => { e.stopPropagation(); deleteJournal(entry); });
 
   return card;
-}
-
-async function toggleBookmark(entry) {
-  try {
-    const saved = await api(detailUrl(API.journal, entry.id), {
-      method: "PATCH",
-      body: { is_bookmark: !entry.is_bookmark },
-    });
-    Object.assign(entry, saved);
-    renderJournals();
-  } catch (err) {
-    console.error(err);
-    toast("Couldn't update bookmark", true);
-  }
 }
 
 async function deleteJournal(entry) {
@@ -641,10 +627,6 @@ function openJournalForm(entry) {
           <input type="file" id="jf-images" accept="image/*" multiple>
         </div>
       </div>
-      <div class="checkbox-field field">
-        <input type="checkbox" id="jf-bookmark" ${entry?.is_bookmark ? "checked" : ""}>
-        <label for="jf-bookmark">Bookmark this entry</label>
-      </div>
       <div class="form-actions">
         <button type="button" class="btn-secondary" id="jf-cancel">Cancel</button>
         <button type="submit" class="btn-primary">${editing ? "Save changes" : "Add entry"}</button>
@@ -668,7 +650,6 @@ async function saveJournal(entry) {
   form.append("emotion", document.getElementById("jf-emotion").value);
   form.append("emotion_rating", document.getElementById("jf-rating").value);
   form.append("text", document.getElementById("jf-text").value);
-  form.append("is_bookmark", document.getElementById("jf-bookmark").checked);
 
   const files = document.getElementById("jf-images").files;
   for (const file of files) form.append("upload_images", file);
