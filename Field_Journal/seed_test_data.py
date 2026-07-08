@@ -4,10 +4,9 @@ from django.utils import timezone
 from datetime import timedelta
 
 User = get_user_model()
-user = User.objects.get(username='kk')
+user = User.objects.get(username='demo')
 
-ratings = [3, 5, 4, 7, 6, 8, 9]  # oldest -> newest, one per day | W Claude
-
+ratings = [3, 5, 4, 7, 6, 8, 9]
 for i, rating in enumerate(ratings):
     days_ago = len(ratings) - 1 - i
     j = Journal.objects.create(
@@ -22,5 +21,3 @@ for i, rating in enumerate(ratings):
     )
 
 print("Done — created", len(ratings), "test entries.")
-
-# !!!!!!! test file của t, xin đừng chạm
