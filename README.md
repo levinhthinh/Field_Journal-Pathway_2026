@@ -16,14 +16,30 @@ Thông qua dự án này, nhóm em mong muốn tạo ra một ứng dụng hữu
     - Python 3.12+
     - Git
 
-Clone the repository:
+### Commands
 
 ```bash
+#Clone the repository:
 git clone 'https://github.com/levinhthinh/Field_Journal-Pathway_2026'
 cd Field_Journal-Pathway_2026
+
+#Activate virtual environment
+python -m venv .venv
+source .venv/bin/activate #if you use Linux/ MacOS
+.\.venv\Scripts\Activate.ps1 # if you use Windows
+
+#install dependencies
+pip install -r requirements.txt
+
+#run server
+cd Field_Journal
+python manage.py migrate
+python manage.py runserver
 ```
 
-### Linux
+Or you could use the install and run scripts.
+
+#### Linux/MacOS Script
 
 ```bash
 chmod +x install.sh
@@ -32,7 +48,7 @@ chmod +x run.sh
 ./run.sh
 ```
 
-### Windows (PowerShell)
+#### Windows (PowerShell) Script
 
 ```powershell
 .\install.ps1
